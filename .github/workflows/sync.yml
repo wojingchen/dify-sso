@@ -1,0 +1,38 @@
+name: Upstream Sync
+
+permissions:
+  contents: write
+
+on:
+  schedule:
+    - cron: "0 0 * * *" # 每天 UTC 0点（北京时间早8点）自动运行
+  workflow_dispatch: # 允许手动点按钮运行
+
+jobs:
+  sync_latest_from_upstream:
+    name: Sync latest commits from upstream repo
+    runs-on: ubuntu-latest
+    if: ${{ github.event.repository.fork }} # 只有是 Fork 的仓库才运行
+
+    steps:
+      # 1. 检出你的代码
+      - name: Checkout target repo
+        uses: actions/checkout@v3
+
+      # 2. 同步上游代码
+      - name: Sync upstream changes
+        id: sync
+        uses: aormsby/Fork-Sync-With-Upstream-action@v3.4
+        with:
+          upstream_sync_repo: lework/dify-sso # 原作者仓库
+          upstream_sync_branch: main          # 原作者分支
+          target_sync_branch: main            # 你的分支
+          target_repo_token: ${{ secrets.GITHUB_TOKEN }} # 自动生成的令牌，无需手动配置
+          test_mode: false
+
+      # 3. 检查是否成功（可选日志）
+      - name: Check for Failure
+        if: failure()
+        run: |
+          echo "[Error] Connection to upstream failed or conflict occurred."
+          echo "如果原仓库被删除，此步骤会失败，但你的代码依然安全保存在这里。"
