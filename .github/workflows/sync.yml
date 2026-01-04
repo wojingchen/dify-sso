@@ -25,8 +25,8 @@ jobs:
         uses: aormsby/Fork-Sync-With-Upstream-action@v3.4
         with:
           upstream_sync_repo: lework/dify-sso # 原作者仓库
-          upstream_sync_branch: main          # 原作者分支
-          target_sync_branch: main            # 你的分支
+          upstream_sync_branch: master          # 原作者分支
+          target_sync_branch: master            # 你的分支
           target_repo_token: ${{ secrets.GITHUB_TOKEN }} # 自动生成的令牌，无需手动配置
           test_mode: false
 
